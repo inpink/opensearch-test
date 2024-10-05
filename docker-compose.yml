@@ -1,0 +1,66 @@
+# Only used for testing the docker images
+version: '3'
+services:
+  opensearch-1:
+    image: a80795a304f64378883f770af012db2959024e0d60162720c18403d730ad4d1a
+    container_name: replication-node11-orin
+    environment:
+      - cluster.name=leader-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/tmp/opensearch-repo
+      - node.attr.testattr=test
+      - cluster.routing.allocation.disk.watermark.low=1b
+      - cluster.routing.allocation.disk.watermark.high=1b
+      - cluster.routing.allocation.disk.watermark.flood_stage=1b
+      - node.store.allow_mmap=false
+    volumes:
+      - ./build/repo:/tmp/opensearch-repo
+      - ./build/logs/1:/usr/share/opensearch/logs
+      - ./build/plugins/1:/usr/share/opensearch/plugins
+    ports:
+      - 9201:9200
+      - 9700:9600
+    networks:
+      - opensearch-net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536  # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+        hard: 65536
+  opensearch-2:
+    image: a80795a304f64378883f770af012db2959024e0d60162720c18403d730ad4d1a
+    container_name: replication-node22-orin
+    environment:
+      - cluster.name=follower-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/tmp/opensearch-repo
+      - node.attr.testattr=test
+      - cluster.routing.allocation.disk.watermark.low=1b
+      - cluster.routing.allocation.disk.watermark.high=1b
+      - cluster.routing.allocation.disk.watermark.flood_stage=1b
+      - node.store.allow_mmap=false
+    volumes:
+      - ./build/repo:/tmp/opensearch-repo
+      - ./build/logs/2:/usr/share/opensearch/logs
+      - ./build/plugins/2:/usr/share/opensearch/plugins
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - opensearch-net
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536  # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+        hard: 65536
+
+networks:
+  opensearch-net:
