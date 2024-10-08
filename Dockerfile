@@ -61,8 +61,6 @@ RUN ls -l $TEMP_DIR && \
     /usr/share/opensearch/bin/opensearch-plugin install file:/usr/share/opensearch/opensearch-cross-cluster-replication-3.0.0.0-SNAPSHOT.zip && \
     rm -rf $TEMP_DIR
 
-#작동안함   /usr/share/opensearch/bin/opensearch-plugin install file:///usr/share/opensearch/opensearch-cross-cluster-replication-3.0.0.0-SNAPSHOT.zip && \
-
 
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images
